@@ -26,37 +26,40 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Создаем роли
-        Role adminRole = new Role();
-        adminRole.setName("ADMINISTRATOR");
-        roleRepository.save(adminRole);
+        if (!roleRepository.existsByName("ADMINISTRATOR")) {
+            Role adminRole = new Role();
+            adminRole.setName("ADMINISTRATOR");
+            roleRepository.save(adminRole);
+        }
 
-        Role userRole = new Role();
-        userRole.setName("SIMPLE_USER");
-        roleRepository.save(userRole);
+        if (!roleRepository.existsByName("SIMPLE_USER")) {
+            Role userRole = new Role();
+            userRole.setName("SIMPLE_USER");
+            roleRepository.save(userRole);
+        }
 
         // Создаем администратора
-        UserEntity admin = new UserEntity();
-        admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin"));
+        if (!userRepository.existsByUsername("admin")) {
+            UserEntity admin = new UserEntity();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("admin"));
 
-        // Присваиваем роли пользователю
-        Set<Role> adminRoles = new HashSet<>();
-        adminRoles.add(adminRole);
-        admin.setRoles(adminRoles);
-
-        userRepository.save(admin);
+            Set<Role> adminRoles = new HashSet<>();
+            adminRoles.add(roleRepository.findByName("ADMINISTRATOR")); // Получаем роль из БД
+            admin.setRoles(adminRoles);
+            userRepository.save(admin);
+        }
 
         // Создаем обычного пользователя
-        UserEntity user = new UserEntity();
-        user.setUsername("user");
-        user.setPassword(passwordEncoder.encode("user"));
+        if (!userRepository.existsByUsername("user")) {
+            UserEntity user = new UserEntity();
+            user.setUsername("user");
+            user.setPassword(passwordEncoder.encode("user"));
 
-        // Присваиваем роли пользователю
-        Set<Role> userRoles = new HashSet<>();
-        userRoles.add(userRole);
-        user.setRoles(userRoles);
-
-        userRepository.save(user);
+            Set<Role> userRoles = new HashSet<>();
+            userRoles.add(roleRepository.findByName("SIMPLE_USER")); // Получаем роль из БД
+            user.setRoles(userRoles);
+            userRepository.save(user);
+        }
     }
 }

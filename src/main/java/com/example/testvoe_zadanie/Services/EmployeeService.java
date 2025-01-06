@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;

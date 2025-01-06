@@ -34,11 +34,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/employees/**").hasAnyAuthority("SIMPLE_USER", "ADMINISTRATOR") // Разрешение на GET для обычных пользователей и администраторов
                         .requestMatchers(HttpMethod.POST, "/api/employees/**").hasAuthority("ADMINISTRATOR") // Только администраторы могут выполнять POST
                         .requestMatchers(HttpMethod.PUT, "/api/employees/**").hasAuthority("ADMINISTRATOR") // Только администраторы могут выполнять PUT
                         .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasAuthority("ADMINISTRATOR") // Только администраторы могут выполнять DELETE
-                        .anyRequest().denyAll() // Запретить все остальные запросы
+                         .anyRequest().authenticated()
+                      //  .anyRequest().denyAll() // Запретить все остальные запросы
                 )
                 .formLogin(form -> form
                         .permitAll() // Доступ к странице входа для всех

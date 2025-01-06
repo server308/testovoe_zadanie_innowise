@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "departments")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "employees")
