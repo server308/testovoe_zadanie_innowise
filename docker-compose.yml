@@ -1,0 +1,22 @@
+version: '3'
+services:
+  employee_management:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: employee_management
+    ports:
+      - "5432:5432"  # Открываем порт для доступа
+
+  app:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://employee_management:5432/employee_management
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
