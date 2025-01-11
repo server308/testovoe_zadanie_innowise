@@ -1,22 +1,29 @@
-version: '3'
+version: '3.8'
+
 services:
-  employee_management:
-    image: postgres:latest
+  db:
+    image: postgres:17
+    container_name: employee_management_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
       POSTGRES_DB: employee_management
     ports:
-      - "5432:5432"  # Открываем порт для доступа
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
   app:
-    build: .
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://employee_management:5432/employee_management
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-    depends_on:
-      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: testvoe_zadanie_app
     ports:
       - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - db
+
+volumes:
+  db_data:
