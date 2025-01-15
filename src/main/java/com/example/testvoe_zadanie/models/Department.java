@@ -2,17 +2,15 @@ package com.example.testvoe_zadanie.models;
 
 import com.example.testvoe_zadanie.models.Employee;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "departments")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "employees")
 @ToString(exclude = "employees")

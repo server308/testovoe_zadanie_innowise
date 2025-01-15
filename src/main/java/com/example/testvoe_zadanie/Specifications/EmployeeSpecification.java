@@ -1,47 +1,80 @@
 package com.example.testvoe_zadanie.Specifications;
 
 import com.example.testvoe_zadanie.DTO.EmployeeSearchCriteria;
-import com.example.testvoe_zadanie.models.Employee;
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.*;
+import com.example.testvoe_zadanie.models.Employee;
 import com.example.testvoe_zadanie.models.Status;
-import com.example.testvoe_zadanie.models.Department;
+import com.example.testvoe_zadanie.models.Manager;
+
+
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeSpecification {
+public class EmployeeSpecification implements Specification<Employee> {
 
-    public static Specification<Employee> getEmployeeSpecification(EmployeeSearchCriteria criteria) {
-        return (root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.equal(root.get("deleted"), false));
+    private EmployeeSearchCriteria criteria;
 
-            if (criteria.getFirstName() != null && !criteria.getFirstName().isEmpty()) {
-                predicates.add(builder.like(builder.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
-            }
+    // Конструктор, принимающий критерии поиска
+    public EmployeeSpecification(EmployeeSearchCriteria criteria) {
+        this.criteria = criteria;
+    }
 
-            if (criteria.getLastName() != null && !criteria.getLastName().isEmpty()) {
-                predicates.add(builder.like(builder.lower(root.get("lastName")), "%" + criteria.getLastName().toLowerCase() + "%"));
-            }
+    public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        List<Predicate> predicates = new ArrayList<>();
 
-            if (criteria.getStatus() != null && !criteria.getStatus().isEmpty()) {
-                Join<Employee, Status> statusJoin = root.join("status", JoinType.INNER);
-                predicates.add(builder.like(builder.lower(statusJoin.get("name")), "%" + criteria.getStatus().toLowerCase() + "%"));
-            }
+        // Фильтрация по имени сотрудника
+        if (criteria.getFirstName() != null) {
+            predicates.add(builder.like(builder.lower(root.get("firstName")), "%" + criteria.getFirstName().toLowerCase() + "%"));
+        }
 
-            if (criteria.getManagerName() != null && !criteria.getManagerName().isEmpty()) {
-                predicates.add(builder.like(builder.lower(root.get("managerName")), "%" + criteria.getManagerName().toLowerCase() + "%"));
-            }
+        // Фильтрация по фамилии сотрудника
+        if (criteria.getLastName() != null) {
+            predicates.add(builder.like(builder.lower(root.get("lastName")), "%" + criteria.getLastName().toLowerCase() + "%"));
+        }
 
-            if (criteria.getDepartmentNames() != null && !criteria.getDepartmentNames().isEmpty()) {
-                Join<Employee, Department> departmentJoin = root.join("departments", JoinType.INNER);
-                CriteriaBuilder.In<String> inClause = builder.in(builder.lower(departmentJoin.get("name")));
-                criteria.getDepartmentNames().forEach(name -> inClause.value(name.toLowerCase()));
-                predicates.add(inClause);
-            }
-            query.distinct(true);
-            return builder.and(predicates.toArray(new Predicate[0]));
-        };
+        // Фильтрация по email сотрудника
+        if (criteria.getEmail() != null) {
+            predicates.add(builder.like(builder.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
+        }
+
+        // Фильтрация по номеру телефона сотрудника
+        if (criteria.getPhoneNumber() != null) {
+            predicates.add(builder.like(builder.lower(root.get("phoneNumber")), "%" + criteria.getPhoneNumber().toLowerCase() + "%"));
+        }
+
+        // Фильтрация по ID менеджера
+        if (criteria.getManagerId() != null) {
+            predicates.add(builder.equal(root.get("manager").get("id"), criteria.getManagerId()));
+        }
+
+        // Фильтрация по статусу сотрудника
+        if (criteria.getStatusId() != null) {
+            predicates.add(builder.equal(root.get("status").get("id"), criteria.getStatusId()));
+        }
+
+        // Фильтрация по удаленности (soft delete)
+        if (criteria.getDeleted() != null) {
+            predicates.add(builder.equal(root.get("deleted"), criteria.getDeleted()));
+        }
+
+        // Фильтрация по имени менеджера
+        if (criteria.getManagerName() != null) {
+            predicates.add(builder.like(builder.lower(root.get("manager").get("name")), "%" + criteria.getManagerName().toLowerCase() + "%"));
+        }
+
+// Фильтрация по названию отдела
+        if (criteria.getDepartmentName() != null) {
+            predicates.add(builder.like(builder.lower(root.get("department").get("name")), "%" + criteria.getDepartmentName().toLowerCase() + "%"));
+        }
+
+
+        // Возвращаем все условия в виде одного предиката
+        return builder.and(predicates.toArray(new Predicate[0]));
     }
 }

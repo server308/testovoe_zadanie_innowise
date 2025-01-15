@@ -11,3 +11,4 @@ CREATE TABLE IF NOT EXISTS user_roles (
                             FOREIGN KEY (user_id) REFERENCES user_entity(id) ON DELETE CASCADE,
                             FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE
 );
+

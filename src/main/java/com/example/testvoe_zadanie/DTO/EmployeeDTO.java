@@ -1,21 +1,27 @@
 package com.example.testvoe_zadanie.DTO;
 
-
-import com.example.testvoe_zadanie.models.Department;
-import com.example.testvoe_zadanie.models.Status;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 public class EmployeeDTO {
-
     private Long id;
-
-    @NotBlank(message = "First name is required")
     private String firstName;
+    private String lastName;
+    private String email;
+    private String phoneNumber;
+    private Long statusId;
+    private String statusName;
+    private Long managerId;
+    private String managerName;
+    private Set<Long> departmentIds;
+    private Set<String> departmentNames;
+
 
     public Long getId() {
         return id;
@@ -57,20 +63,28 @@ public class EmployeeDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Long getStatusId() {
+        return statusId;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setStatusId(Long statusId) {
+        this.statusId = statusId;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
     }
 
     public String getManagerName() {
@@ -81,30 +95,21 @@ public class EmployeeDTO {
         this.managerName = managerName;
     }
 
-    public Set<Department> getDepartments() {
-        return departments;
+    public Set<Long> getDepartmentIds() {
+        return departmentIds;
     }
 
-    public void setDepartments(Set<Department> departments) {
-        this.departments = departments;
+    public void setDepartmentIds(Set<Long> departmentIds) {
+        this.departmentIds = departmentIds;
     }
 
-    @NotBlank(message = "Last name is required")
-    private String lastName;
+    public Set<String> getDepartmentNames() {
+        return departmentNames;
+    }
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
-    private String email;
+    public void setDepartmentNames(Set<String> departmentNames) {
+        this.departmentNames = departmentNames;
+    }
 
 
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number format")
-    private String phoneNumber;
-
-    private String photoUrl;
-
-    private Status status;
-
-    private String managerName;
-
-    private Set<Department> departments;
 }

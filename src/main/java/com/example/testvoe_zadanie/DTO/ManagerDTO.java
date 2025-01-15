@@ -1,20 +1,17 @@
-package com.example.testvoe_zadanie.models;
+package com.example.testvoe_zadanie.DTO;
 
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "role")
 @Getter
 @Setter
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ManagerDTO {
     private Long id;
 
+    @NotBlank(message = "Name is required")
     private String name;
 
     public Long getId() {

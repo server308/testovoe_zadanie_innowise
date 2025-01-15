@@ -1,13 +1,16 @@
 package com.example.testvoe_zadanie.models;
 
-import com.example.testvoe_zadanie.models.Status;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,11 +18,62 @@ import java.util.Set;
 
 @Entity
 @Table(name = "employees")
-@Data
+@Getter
+@Setter
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "First name is required")
+    @Column(name = "first_name")
+    private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    @Column(name = "last_name")
+    private String lastName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    @Column(name = "email", unique = true)
+    private String email;
+
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number format")
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id")
+    private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id") // Связь с сущностью Manager
+    private Manager manager;
+
+    @Column(name = "deleted")
+    private boolean deleted = false;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(name = "employee_department",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "department_id"))
+    private Set<Department> departments = new HashSet<>();
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -53,13 +107,6 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
 
     public Status getStatus() {
         return status;
@@ -69,12 +116,12 @@ public class Employee {
         this.status = status;
     }
 
-    public String getManagerName() {
-        return managerName;
+    public Manager getManager() {
+        return manager;
     }
 
-    public void setManagerName(String managerName) {
-        this.managerName = managerName;
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     public boolean isDeleted() {
@@ -108,59 +155,4 @@ public class Employee {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    @NotBlank(message = "First name is required")
-    @Column(name="first_name")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    @Column(name = "last_name")
-    private String lastName;
-
-    public Long getId() {
-        return id;
-    }
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
-    @Column(name = "email", unique = true)
-    private String email;
-
-
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number format")
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-
-    @Column(name = "photo_url")
-    private String photoUrl;
-
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_id")
-    private Status status;
-
-    @Column(name = "manager_name")
-    private String managerName;
-
-    @Column(name = "deleted")
-    private boolean deleted = false;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
-    @JoinTable(name = "employee_department",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "department_id"))
-    private Set<Department> departments = new HashSet<>();
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-
-
 }

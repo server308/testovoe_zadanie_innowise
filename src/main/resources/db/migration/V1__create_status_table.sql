@@ -5,3 +5,8 @@ CREATE TABLE IF NOT EXISTS status (
 INSERT INTO status (name) VALUES
                               ('Active'),
                               ('NoActive');
+
+CREATE TABLE managers (
+                          id BIGSERIAL PRIMARY KEY,
+                          name VARCHAR(255) NOT NULL
+);

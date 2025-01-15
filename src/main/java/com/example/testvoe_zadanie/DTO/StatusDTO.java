@@ -1,20 +1,11 @@
-package com.example.testvoe_zadanie.models;
+package com.example.testvoe_zadanie.DTO;
 
 
-import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-@Entity
-@Table(name = "role")
-@Getter
-@Setter
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class StatusDTO {
     private Long id;
-
     private String name;
 
     public Long getId() {

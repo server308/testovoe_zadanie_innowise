@@ -1,14 +1,21 @@
 package com.example.testvoe_zadanie.models;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
-@NoArgsConstructor
+@Table(name = "status")
+@Getter
+@Setter
 public class Status {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
 
     public Long getId() {
         return id;
@@ -25,14 +32,4 @@ public class Status {
     public void setName(String name) {
         this.name = name;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "name")
-    private String name;
 }
-
-
-
